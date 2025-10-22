@@ -1,0 +1,24 @@
+--- a/chromeos-install.sh
++++ b/chromeos-install.sh
+@@ -921,6 +921,21 @@
+     copy_partition "${PARTITION_NUM_MINIOS_B}" "${SRC}" "${DST}" 1 1 false # 10
+   fi
+ 
++  # Install u-boot to eMMC for NVMe boot
++  if [ "${DST}" = "/dev/nvme0n1" ]; then
++    echo "Install u-boot to eMMC."
++    /sbin/sfdisk /dev/mmcblk0 <<-EOF
++      label: gpt
++      size=64M, type=uefi
++EOF
++    /usr/sbin/mkfs.fat -F 32 /dev/mmcblk0p1
++
++    tracked_mount -t vfat /dev/mmcblk0p1 "${TMPMNT}"
++    cp -f /boot/u-boot.bin-rtd1619b_emmc "${TMPMNT}/"
++    tracked_umount "${TMPMNT}"
++    sync
++  fi
++
+   do_post_install
+ 
+   # Force data to disk before we declare done.
