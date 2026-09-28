@@ -1,0 +1,2 @@
+# fydroid (Android 13 container); the generic ARMv8 image, not the RK3588 one.
+USE="${USE} fydroid fydroid-rt_armv8"
